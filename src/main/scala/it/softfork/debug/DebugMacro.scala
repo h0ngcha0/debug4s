@@ -25,12 +25,12 @@ object DebugMacroImpl {
 
     val tree = param.tree match {
       case c.universe.Literal(c.universe.Constant(_)) =>
-        q"""implicitly[sourcecode.File].value + ":" + implicitly[sourcecode.Line].value + "\n> " + $param"""
+        q"""implicitly[sourcecode.File].value + ":" + implicitly[sourcecode.Line].value + "\n> " + pprint.apply($param)"""
 
       case _ => {
         val paramRepTree = Literal(Constant(show(param.tree)))
         val paramRepExpr = c.Expr[String](paramRepTree)
-        q"""implicitly[sourcecode.File].value + ":" + implicitly[sourcecode.Line].value + "\n> " + $paramRepExpr + " = " + $param"""
+        q"""implicitly[sourcecode.File].value + ":" + implicitly[sourcecode.Line].value + "\n> " + $paramRepExpr + " = " + pprint.apply($param)"""
       }
     }
 

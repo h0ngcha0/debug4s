@@ -8,18 +8,32 @@ class DebugMacroSpec extends FlatSpec with Matchers {
     val x = 100
     val debugXMessage = debugMessage(x)
 
-    assert(debugXMessage.contains(
+    assert(removeAnsiColor(debugXMessage).contains(
       """debug/src/test/scala/it/softfork/debug/DebugMacroSpec.scala:9
         |> x = 100""".stripMargin
     ))
 
     val y = 200
     val debugXPlusYMessage = debugMessage(x+y)
-    assert(debugXPlusYMessage.contains(
+    assert(removeAnsiColor(debugXPlusYMessage).contains(
       """debug/src/test/scala/it/softfork/debug/DebugMacroSpec.scala:17
         |> x.+(y) = 300""".stripMargin
     ))
 
-    debug(x+y)
+    val foo = Foo(10, Bar(100))
+    debug(foo)
+  }
+
+  private def removeAnsiColor(message: String): String = {
+    message.replaceAll("\u001B\\[[;\\d]*m", "")
   }
 }
+
+case class Foo(
+  x: Int,
+  y: Bar
+)
+
+case class Bar(
+  z: Int
+)
