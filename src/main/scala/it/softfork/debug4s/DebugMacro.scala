@@ -1,4 +1,4 @@
-package it.softfork.debug
+package it.softfork.debug4s
 
 import scala.language.experimental.macros
 import scala.reflect.macros.blackbox

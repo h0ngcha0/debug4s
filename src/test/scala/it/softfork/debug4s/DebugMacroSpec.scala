@@ -1,4 +1,4 @@
-package it.softfork.debug
+package it.softfork.debug4s
 
 import org.scalatest.{FlatSpec, Matchers}
 import DebugMacro._
