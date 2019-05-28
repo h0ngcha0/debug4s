@@ -5,23 +5,35 @@ import scala.reflect.macros.blackbox
 
 object DebugMacro {
   def debug(param: Any): Unit = macro DebugMacroImpl.debugImpl
+
+  def debugMessage(param: Any): String = macro DebugMacroImpl.debugMessageImpl
 }
 
 object DebugMacroImpl {
+
   def debugImpl(c: blackbox.Context)(param: c.Expr[Any]): c.Expr[Unit] = {
+    import c.universe._
+    val messageExpr: c.Expr[String] = debugMessageImpl(c)(param)
+
+    c.Expr[Unit](
+      q"""println($messageExpr)"""
+    )
+  }
+
+  def debugMessageImpl(c: blackbox.Context)(param: c.Expr[Any]): c.Expr[String] = {
     import c.universe._
 
     val tree = param.tree match {
       case c.universe.Literal(c.universe.Constant(_)) =>
-        q"""println(implicitly[sourcecode.File].value + ":" + implicitly[sourcecode.Line].value + "\n> " + $param)"""
+        q"""implicitly[sourcecode.File].value + ":" + implicitly[sourcecode.Line].value + "\n> " + $param"""
 
       case _ => {
         val paramRepTree = Literal(Constant(show(param.tree)))
         val paramRepExpr = c.Expr[String](paramRepTree)
-        q"""println(implicitly[sourcecode.File].value + ":" + implicitly[sourcecode.Line].value + "\n> " + $paramRepExpr + " = " + $param)"""
+        q"""implicitly[sourcecode.File].value + ":" + implicitly[sourcecode.Line].value + "\n> " + $paramRepExpr + " = " + $param"""
       }
     }
 
-    c.Expr[Unit](tree)
+    c.Expr[String](tree)
   }
 }
