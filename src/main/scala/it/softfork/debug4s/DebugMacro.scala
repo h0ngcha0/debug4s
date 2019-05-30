@@ -28,12 +28,30 @@ object DebugMacroImpl {
         q"""implicitly[sourcecode.File].value + ":" + implicitly[sourcecode.Line].value + "\n> " + pprint.apply($param)"""
 
       case _ => {
-        val paramRepTree = Literal(Constant(show(param.tree)))
+        val paramSource = treeSource(c)(param.tree)
+        val paramRepTree = Literal(Constant(paramSource))
         val paramRepExpr = c.Expr[String](paramRepTree)
         q"""implicitly[sourcecode.File].value + ":" + implicitly[sourcecode.Line].value + "\n> " + $paramRepExpr + " = " + pprint.apply($param)"""
       }
     }
 
     c.Expr[String](tree)
+  }
+
+  private def treeSource(c: blackbox.Context)(tree: c.universe.Tree): String = {
+    // Inspiration from:
+    // https://github.com/lihaoyi/sourcecode/blob/23d11b3b6d4b65d4e66aec6473f510862c81117f/sourcecode/shared/src/main/scala-2.x/sourcecode/Macros.scala#L125
+    val sourceContent = new String(tree.pos.source.content)
+    val start = tree.collect {
+      case treeVal => treeVal.pos match {
+        case c.universe.NoPosition ⇒ Int.MaxValue
+        case p ⇒ p.startOrPoint
+      }
+    }.min
+    val g = c.asInstanceOf[reflect.macros.runtime.Context].global
+    val parser = g.newUnitParser(sourceContent.drop(start))
+    parser.expr()
+    val end = parser.in.lastOffset
+    sourceContent.slice(start, start + end)
   }
 }

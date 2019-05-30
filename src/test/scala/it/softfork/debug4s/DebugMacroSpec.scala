@@ -14,10 +14,10 @@ class DebugMacroSpec extends FlatSpec with Matchers {
     ))
 
     val y = 200
-    val debugXPlusYMessage = debugMessage(x+y)
+    val debugXPlusYMessage = debugMessage(x + y)
     assert(removeAnsiColor(debugXPlusYMessage).contains(
       """src/test/scala/it/softfork/debug4s/DebugMacroSpec.scala:17
-        |> x.+(y) = 300""".stripMargin
+        |> x + y = 300""".stripMargin
     ))
 
     val foo = Foo(10, Bar(100))
