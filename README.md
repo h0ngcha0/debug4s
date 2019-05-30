@@ -24,6 +24,7 @@ addCompilerPlugin("org.scalamacros" % "paradise" % "2.1.0" cross CrossVersion.fu
 - Print file and line number of the `debug` statement
 - Print the original expression and its type along side the value after it gets evaluated
 - Evaluated value is pretty printed using [pprint](https://github.com/lihaoyi/PPrint)
+- Support multiple parameters
 - Colorized output
 
 In the following example:
