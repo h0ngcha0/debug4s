@@ -5,6 +5,5 @@ script:
   - sbt clean coverage test coverageReport &&
     sbt coverageAggregate
 after_success:
-  - sbt coveralls &&
-    sbt -Dbintray.user=${BINTRAY_USERNAME} -Dbintray.pass=${BINTRAY_PASSWORD}
+  - sbt coveralls
 sudo: false

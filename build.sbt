@@ -1,4 +1,4 @@
-name := "debug"
+name := "debug4s"
 organization := "it.softfork"
 
 scalaVersion := "2.12.8"
@@ -13,3 +13,5 @@ libraryDependencies ++= Seq(
 bintrayReleaseOnPublish in ThisBuild := true
 
 addCompilerPlugin("org.scalamacros" % "paradise" % "2.1.1" cross CrossVersion.full)
+
+licenses += ("MIT", url("http://opensource.org/licenses/MIT"))
