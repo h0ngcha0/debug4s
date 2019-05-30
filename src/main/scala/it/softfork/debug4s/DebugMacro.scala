@@ -28,10 +28,14 @@ object DebugMacroImpl {
         q"""implicitly[sourcecode.File].value + ":" + implicitly[sourcecode.Line].value + "\n> " + pprint.apply($param)"""
 
       case _ => {
-        val paramSource = treeSource(c)(param.tree)
-        val paramRepTree = Literal(Constant(paramSource))
-        val paramRepExpr = c.Expr[String](paramRepTree)
-        q"""implicitly[sourcecode.File].value + ":" + implicitly[sourcecode.Line].value + "\n> " + $paramRepExpr + " = " + pprint.apply($param)"""
+        val fileName = c.Expr[String](Literal(Constant(param.tree.pos.source.file.name)))
+        val lineNumber = c.Expr[Int](Literal(Constant(param.tree.pos.line)))
+        val paramRepExpr = {
+          val paramSource = treeSource(c)(param.tree)
+          val paramRepTree = Literal(Constant(paramSource))
+          c.Expr[String](paramRepTree)
+        }
+        q"""$fileName + ":" + $lineNumber + "\n> " + $paramRepExpr + " = " + pprint.apply($param)"""
       }
     }
 
