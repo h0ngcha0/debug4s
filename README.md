@@ -13,7 +13,7 @@ Add the following to your `build.sbt` file:
 ```scala
 resolvers += Resolver.bintrayRepo("liuhongchao", "maven")
 
-libraryDependencies += "it.softfork" %% "debug4s" % "0.0.3"
+libraryDependencies += "it.softfork" %% "debug4s" % "0.0.4"
 
 // Needed for macro annotations
 addCompilerPlugin("org.scalamacros" % "paradise" % "2.1.0" cross CrossVersion.full)
