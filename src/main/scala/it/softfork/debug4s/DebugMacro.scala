@@ -5,40 +5,55 @@ import scala.reflect.macros.blackbox
 import scala.language.existentials
 
 object DebugMacro {
-  def debug(param: Any): Unit = macro DebugMacroImpl.debugImpl
+  def debug(params: Any*): Unit = macro DebugMacroImpl.debugImpl
 
-  def debugMessage(param: Any): String = macro DebugMacroImpl.debugMessageImpl
+  private[debug4s] def debugMessage(params: Any*): String = macro DebugMacroImpl.debugMessageImpl
 }
 
 object DebugMacroImpl {
 
-  def debugImpl(c: blackbox.Context)(param: c.Expr[Any]): c.Expr[Unit] = {
+  def debugImpl(c: blackbox.Context)(params: c.Expr[Any]*): c.Expr[Unit] = {
     import c.universe._
-    val messageExpr: c.Expr[String] = debugMessageImpl(c)(param)
+    val messageExpr: c.Expr[String] = debugMessageImpl(c)(params:_*)
 
     c.Expr[Unit](
       q"""println($messageExpr)"""
     )
   }
 
-  def debugMessageImpl(c: blackbox.Context)(param: c.Expr[Any]): c.Expr[String] = {
+  def debugMessageImpl(c: blackbox.Context)(params: c.Expr[Any]*): c.Expr[String] = {
     import c.universe._
 
-    val fileName = stringExpr(c)(param.tree.pos.source.file.name, Some(fansi.Color.LightBlue))
-    val lineNumber = stringExpr(c)(param.tree.pos.line.toString(), Some(fansi.Color.Yellow))
-    val paramType = stringExpr(c)(param.tree.tpe.toString(), Some(fansi.Color.Cyan))
+    val fileName = stringExpr(c)(c.enclosingPosition.source.file.name, Some(fansi.Color.Blue))
+    val lineNumber = stringExpr(c)(c.enclosingPosition.line.toString(), Some(fansi.Color.Yellow))
 
-    val messageTree = param.tree match {
-      case c.universe.Literal(c.universe.Constant(_)) =>
-        q"""$fileName + ":" + $lineNumber + "\n> " + pprint.apply($param)"""
+    c.Expr[String](
+      q"""$fileName + ":" + $lineNumber + ${paramsMessageTree(c)(params.zipWithIndex)}"""
+    )
+  }
 
-      case _ => {
-        val paramRepExpr = stringExpr(c)(treeSource(c)(param.tree), Some(fansi.Color.LightGray))
-        q"""$fileName + ":" + $lineNumber + "\n> " + $paramRepExpr + " : " + ${paramType} + " = " + pprint.apply($param)"""
+  private def paramsMessageTree(c: blackbox.Context)(paramsWithIndex: Seq[(c.Expr[Any], Int)]): c.universe.Tree = {
+    import c.universe._
+
+    paramsWithIndex match {
+      case (firstParam, index) +: restOfParams => {
+        val paramType = stringExpr(c)(firstParam.tree.tpe.toString(), Some(fansi.Color.Cyan))
+        val paramIndex = stringExpr(c)(s"${index+1}) ", Some(fansi.Color.LightBlue))
+        val restOfTree = paramsMessageTree(c)(restOfParams)
+
+        firstParam.tree match {
+          case c.universe.Literal(c.universe.Constant(_)) =>
+            q""""\n" + ${paramIndex} + pprint.apply($firstParam) + $restOfTree """
+
+          case _ => {
+            val paramRepExpr = stringExpr(c)(treeSource(c)(firstParam.tree), Some(fansi.Color.LightGray))
+            q""""\n" + ${paramIndex} + $paramRepExpr + " : " + ${paramType} + " = " + pprint.apply($firstParam) + $restOfTree """
+          }
+        }
       }
+      case Nil =>
+        q""""""""
     }
-
-    c.Expr[String](messageTree)
   }
 
   private def treeSource(c: blackbox.Context)(tree: c.universe.Tree): String = {
@@ -62,6 +77,8 @@ object DebugMacroImpl {
 
   private def stringExpr[String](c: blackbox.Context)(str: fansi.Str, colorMaybe: Option[fansi.Attr] = None): c.Expr[String] = {
     val withColorMaybe = colorMaybe.map(_.apply(str).toString()).getOrElse(str)
-    c.Expr[String](c.universe.Literal(c.universe.Constant(withColorMaybe)))
+    c.Expr[String](
+      c.universe.Literal(c.universe.Constant(withColorMaybe))
+    )
   }
 }

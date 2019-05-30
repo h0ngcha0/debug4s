@@ -29,11 +29,12 @@ addCompilerPlugin("org.scalamacros" % "paradise" % "2.1.0" cross CrossVersion.fu
 In the following example:
 
 ```scala
+val z = 100
 val fooMatrix = List.fill(10)("foo").map(List.fill(10)(_))
 
-debug(fooMatrix)  // This is line 31 in DebugMacroSpec.scala
+debug(fooMatrix, z, "i am here to stay")  // This is line 39 in DebugMacroSpec.scala
 ```
 
 `debug` macro will print the following in the console:
 
-![Alt text](/images/foomatrix.png?raw=true)
+![Alt text](/images/foomatrix-multi.png?raw=true)

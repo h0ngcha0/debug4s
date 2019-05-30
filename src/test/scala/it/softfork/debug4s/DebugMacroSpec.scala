@@ -6,29 +6,37 @@ import DebugMacro._
 class DebugMacroSpec extends FlatSpec with Matchers {
   "DebugMacro.debug" should "print the variable being debugged" in {
     val x = 100
-    val debugXMessage = debugMessage(x)
-
-    assert(removeAnsiColor(debugXMessage) ==
+    assert(removeAnsiColor(debugMessage(x, 200)) ==
       """DebugMacroSpec.scala:9
-        |> x : Int = 100""".stripMargin
+        |1) x : Int = 100
+        |2) 200""".stripMargin
     )
 
     val y = 200
-    val debugXPlusYMessage = debugMessage(x + y)
-    assert(removeAnsiColor(debugXPlusYMessage) ==
-      """DebugMacroSpec.scala:17
-        |> x + y : Int = 300""".stripMargin
+    assert(removeAnsiColor(debugMessage(x + y)) ==
+      """DebugMacroSpec.scala:16
+        |1) x + y : Int = 300""".stripMargin
     )
 
-
-    val debugConstantMessage = debugMessage("100")
-    assert(removeAnsiColor(debugConstantMessage) ==
-      """DebugMacroSpec.scala:24
-        |> "100"""".stripMargin
+    assert(removeAnsiColor(debugMessage("100")) ==
+      """DebugMacroSpec.scala:21
+        |1) "100"""".stripMargin
     )
 
+    assert(removeAnsiColor(debugMessage({
+      val square = (y: Int) => y*y
+      square(100)
+    })) ==
+      """DebugMacroSpec.scala:26
+        |1) {
+        |      val square = (y: Int) => y*y
+        |      square(100)
+        |    } : Int = 10000""".stripMargin
+    )
+
+    val z = 100
     val fooMatrix = List.fill(10)("foo").map(List.fill(10)(_))
-    debug(fooMatrix)
+    debug(fooMatrix, z, "i am here to stay")
   }
 
   private def removeAnsiColor(message: String): String = {
