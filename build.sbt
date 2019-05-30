@@ -3,6 +3,8 @@ organization := "it.softfork"
 
 scalaVersion := "2.12.8"
 
+scalacOptions ++= Seq("-deprecation", "-feature")
+
 libraryDependencies ++= Seq(
   "com.lihaoyi" %% "pprint" % "0.5.3",
   "org.scala-lang" % "scala-reflect" % scalaVersion.value,

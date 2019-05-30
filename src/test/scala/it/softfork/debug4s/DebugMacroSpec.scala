@@ -20,6 +20,13 @@ class DebugMacroSpec extends FlatSpec with Matchers {
         |> x + y = 300""".stripMargin
     )
 
+
+    val debugConstantMessage = debugMessage("100")
+    assert(removeAnsiColor(debugConstantMessage) ==
+      """DebugMacroSpec.scala:24
+        |> "100"""".stripMargin
+    )
+
     val foo = Foo(10, Bar(100))
     val fooSeq = Seq(foo, foo, foo, foo, foo)
     debug(fooSeq)

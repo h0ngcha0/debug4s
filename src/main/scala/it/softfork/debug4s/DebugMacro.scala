@@ -2,6 +2,7 @@ package it.softfork.debug4s
 
 import scala.language.experimental.macros
 import scala.reflect.macros.blackbox
+import scala.language.existentials
 
 object DebugMacro {
   def debug(param: Any): Unit = macro DebugMacroImpl.debugImpl
@@ -23,23 +24,24 @@ object DebugMacroImpl {
   def debugMessageImpl(c: blackbox.Context)(param: c.Expr[Any]): c.Expr[String] = {
     import c.universe._
 
-    val tree = param.tree match {
+    val fileName = c.Expr[String](Literal(Constant(param.tree.pos.source.file.name)))
+    val lineNumber = c.Expr[Int](Literal(Constant(param.tree.pos.line)))
+
+    val messageTree = param.tree match {
       case c.universe.Literal(c.universe.Constant(_)) =>
-        q"""implicitly[sourcecode.File].value + ":" + implicitly[sourcecode.Line].value + "\n> " + pprint.apply($param)"""
+        q"""$fileName + ":" + $lineNumber + "\n> " + pprint.apply($param)"""
 
       case _ => {
-        val fileName = c.Expr[String](Literal(Constant(param.tree.pos.source.file.name)))
-        val lineNumber = c.Expr[Int](Literal(Constant(param.tree.pos.line)))
         val paramRepExpr = {
           val paramSource = treeSource(c)(param.tree)
-          val paramRepTree = Literal(Constant(paramSource))
-          c.Expr[String](paramRepTree)
+          val withColor = fansi.Color.Cyan(paramSource).toString()
+          c.Expr[String](Literal(Constant(withColor)))
         }
         q"""$fileName + ":" + $lineNumber + "\n> " + $paramRepExpr + " = " + pprint.apply($param)"""
       }
     }
 
-    c.Expr[String](tree)
+    c.Expr[String](messageTree)
   }
 
   private def treeSource(c: blackbox.Context)(tree: c.universe.Tree): String = {
@@ -49,7 +51,9 @@ object DebugMacroImpl {
     val start = tree.collect {
       case treeVal => treeVal.pos match {
         case c.universe.NoPosition ⇒ Int.MaxValue
-        case p ⇒ p.startOrPoint
+        case p ⇒ {
+          if (p.isRange) p.start else p.point
+        }
       }
     }.min
     val g = c.asInstanceOf[reflect.macros.runtime.Context].global
