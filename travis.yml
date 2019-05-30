@@ -5,5 +5,6 @@ script:
   - sbt clean coverage test coverageReport &&
     sbt coverageAggregate
 after_success:
-  - sbt coveralls
+  - sbt coveralls &&
+    sbt publish
 sudo: false

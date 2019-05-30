@@ -21,10 +21,12 @@ class DebugMacroSpec extends FlatSpec with Matchers {
     ))
 
     val foo = Foo(10, Bar(100))
-    debug(foo)
+    val fooSeq = Seq(foo, foo, foo, foo, foo)
+    debug(fooSeq)
   }
 
   private def removeAnsiColor(message: String): String = {
+    println(message)
     message.replaceAll("\u001B\\[[;\\d]*m", "")
   }
 }

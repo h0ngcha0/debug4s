@@ -1,6 +1,5 @@
 name := "debug"
-
-version := "0.1"
+organization := "it.softfork"
 
 scalaVersion := "2.12.8"
 
@@ -10,5 +9,7 @@ libraryDependencies ++= Seq(
   "org.scala-lang" % "scala-reflect" % scalaVersion.value,
   "org.scalatest" %% "scalatest" % "3.0.5" % Test
 )
+
+bintrayReleaseOnPublish in ThisBuild := true
 
 addCompilerPlugin("org.scalamacros" % "paradise" % "2.1.1" cross CrossVersion.full)
