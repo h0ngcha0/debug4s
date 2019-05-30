@@ -24,20 +24,17 @@ object DebugMacroImpl {
   def debugMessageImpl(c: blackbox.Context)(param: c.Expr[Any]): c.Expr[String] = {
     import c.universe._
 
-    val fileName = c.Expr[String](Literal(Constant(param.tree.pos.source.file.name)))
-    val lineNumber = c.Expr[Int](Literal(Constant(param.tree.pos.line)))
+    val fileName = stringExpr(c)(param.tree.pos.source.file.name, Some(fansi.Color.LightBlue))
+    val lineNumber = stringExpr(c)(param.tree.pos.line.toString(), Some(fansi.Color.Yellow))
+    val paramType = stringExpr(c)(param.tree.tpe.toString(), Some(fansi.Color.Cyan))
 
     val messageTree = param.tree match {
       case c.universe.Literal(c.universe.Constant(_)) =>
         q"""$fileName + ":" + $lineNumber + "\n> " + pprint.apply($param)"""
 
       case _ => {
-        val paramRepExpr = {
-          val paramSource = treeSource(c)(param.tree)
-          val withColor = fansi.Color.Cyan(paramSource).toString()
-          c.Expr[String](Literal(Constant(withColor)))
-        }
-        q"""$fileName + ":" + $lineNumber + "\n> " + $paramRepExpr + " = " + pprint.apply($param)"""
+        val paramRepExpr = stringExpr(c)(treeSource(c)(param.tree), Some(fansi.Color.LightGray))
+        q"""$fileName + ":" + $lineNumber + "\n> " + $paramRepExpr + " : " + ${paramType} + " = " + pprint.apply($param)"""
       }
     }
 
@@ -61,5 +58,10 @@ object DebugMacroImpl {
     parser.expr()
     val end = parser.in.lastOffset
     sourceContent.slice(start, start + end)
+  }
+
+  private def stringExpr[String](c: blackbox.Context)(str: fansi.Str, colorMaybe: Option[fansi.Attr] = None): c.Expr[String] = {
+    val withColorMaybe = colorMaybe.map(_.apply(str).toString()).getOrElse(str)
+    c.Expr[String](c.universe.Literal(c.universe.Constant(withColorMaybe)))
   }
 }
