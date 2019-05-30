@@ -6,5 +6,5 @@ script:
     sbt coverageAggregate
 after_success:
   - sbt coveralls &&
-    sbt publish
+    sbt -Dbintray.user=${BINTRAY_USERNAME} -Dbintray.pass=${BINTRAY_PASSWORD}
 sudo: false
