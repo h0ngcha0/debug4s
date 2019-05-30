@@ -26,6 +26,9 @@ class DebugMacroSpec extends FlatSpec with Matchers {
       """DebugMacroSpec.scala:24
         |> "100"""".stripMargin
     )
+
+    val fooMatrix = List.fill(10)("foo").map(List.fill(10)(_))
+    debug(fooMatrix)
   }
 
   private def removeAnsiColor(message: String): String = {

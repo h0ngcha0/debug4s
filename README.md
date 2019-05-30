@@ -21,25 +21,19 @@ addCompilerPlugin("org.scalamacros" % "paradise" % "2.1.0" cross CrossVersion.fu
 
 ## Features
 
+- Print file and line number of the `debug` statement
+- Print the original expression and its type along side the value after it gets evaluated
+- Evaluated value is pretty printed using [pprint](https://github.com/lihaoyi/PPrint)
+- Colorized output
+
 In the following example:
 
 ```scala
-val sudoku = Seq(
-  Seq(7, 6, 0, 8, 3, 4, 2, 1, 9, 5),
-  Seq(9, 1, 2, 5, 4, 6, 0, 8, 3, 7),
-  Seq(2, 4, 3, 7, 5, 8, 1, 0, 6, 9),
-  Seq(8, 0, 9, 1, 6, 2, 3, 5, 7, 4),
-  Seq(4, 5, 1, 2, 0, 3, 7, 9, 8, 6),
-  Seq(3, 8, 7, 6, 9, 0, 4, 2, 5, 1),
-  Seq(6, 7, 4, 9, 2, 1, 5, 3, 0, 8),
-  Seq(1, 3, 5, 0, 8, 9, 6, 7, 4, 2),
-  Seq(5, 9, 6, 3, 1, 7, 8, 4, 2, 0),
-  Seq(0, 2, 8, 4, 7, 5, 9, 6, 1, 3)
-)
+val fooMatrix = List.fill(10)("foo").map(List.fill(10)(_))
 
-debug(sudoku)  // This is line 45 in DebugMacroSpec.scala
+debug(fooMatrix)  // This is line 31 in DebugMacroSpec.scala
 ```
 
 `debug` macro will print the following in the console:
 
-![Alt text](/images/sudoku.png?raw=true)
+![Alt text](/images/foomatrix.png?raw=true)
