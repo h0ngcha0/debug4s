@@ -49,11 +49,10 @@ class DebugMacroSpec extends FlatSpec with BetterMatchers {
     val barMatrix = List.fill(x)("bar").map(List.fill(y)(_))
     val fooMatrix = List.fill(x)("foo").map(List.fill(y)(_))
 
-    barMatrix shouldEqual fooMatrix
-    1 shouldBe 1
+    intercept[TestFailedException] {
+      barMatrix shouldEqual fooMatrix
+    }
   }
-
-
 }
 
 trait BetterMatchers extends Matchers {
