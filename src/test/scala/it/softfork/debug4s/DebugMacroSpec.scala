@@ -5,17 +5,17 @@ import DebugMacro._
 
 class DebugMacroSpec extends FlatSpec with Matchers {
   "DebugMacro.debug" should "print the variable being debugged" in {
-    val x = 100
-    assert(removeAnsiColor(debugMessage(x, 200)) ==
+    val a = 100
+    assert(removeAnsiColor(debugMessage(a, 200)) ==
       """DebugMacroSpec.scala:9
-        |1) x : Int = 100
+        |1) a : Int = 100
         |2) 200""".stripMargin
     )
 
-    val y = 200
-    assert(removeAnsiColor(debugMessage(x + y)) ==
+    val b = 200
+    assert(removeAnsiColor(debugMessage(a + b)) ==
       """DebugMacroSpec.scala:16
-        |1) x + y : Int = 300""".stripMargin
+        |1) a + b : Int = 300""".stripMargin
     )
 
     assert(removeAnsiColor(debugMessage("100")) ==
@@ -34,9 +34,10 @@ class DebugMacroSpec extends FlatSpec with Matchers {
         |    } : Int = 10000""".stripMargin
     )
 
-    val z = 100
-    val fooMatrix = List.fill(10)("foo").map(List.fill(10)(_))
-    debug(fooMatrix, z, "i am here to stay")
+    val x = 10
+    val y = 10
+    val fooMatrix = List.fill(x)("foo").map(List.fill(y)(_))
+    debug(fooMatrix, x * y, "i am here to stay")
   }
 
   private def removeAnsiColor(message: String): String = {

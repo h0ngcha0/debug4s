@@ -14,9 +14,6 @@ Add the following to your `build.sbt` file:
 resolvers += Resolver.bintrayRepo("liuhongchao", "maven")
 
 libraryDependencies += "it.softfork" %% "debug4s" % "0.0.4"
-
-// Needed for macro annotations
-addCompilerPlugin("org.scalamacros" % "paradise" % "2.1.0" cross CrossVersion.full)
 ```
 
 ## Features
@@ -30,12 +27,12 @@ addCompilerPlugin("org.scalamacros" % "paradise" % "2.1.0" cross CrossVersion.fu
 In the following example:
 
 ```scala
-val z = 100
-val fooMatrix = List.fill(10)("foo").map(List.fill(10)(_))
-
-debug(fooMatrix, z, "i am here to stay")  // This is line 39 in DebugMacroSpec.scala
+val x = 10
+val y = 10
+val fooMatrix = List.fill(x)("foo").map(List.fill(y)(_))
+debug(fooMatrix, x * y, "i am here to stay")   // This is line 40 in DebugMacroSpec.scala
 ```
 
 `debug` macro will print the following in the console:
 
-![Alt text](/images/foomatrix-multi.png?raw=true)
+![Alt text](/images/foomatrix.png?raw=true)
