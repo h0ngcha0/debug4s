@@ -1,7 +1,7 @@
 name := "debug4s"
 organization := "it.softfork"
 
-scalaVersion := "2.12.8"
+scalaVersion := "2.12.13"
 
 scalacOptions ++= Seq("-deprecation", "-feature")
 
