@@ -6,7 +6,7 @@ scalaVersion := "2.12.8"
 scalacOptions ++= Seq("-deprecation", "-feature")
 
 libraryDependencies ++= Seq(
-  "com.lihaoyi" %% "pprint" % "0.5.3",
+  "com.lihaoyi" %% "pprint" % "0.5.9",
   "org.scala-lang" % "scala-reflect" % scalaVersion.value,
   "org.scala-lang" % "scala-compiler" % scalaVersion.value,
   "org.scalatest" %% "scalatest" % "3.0.5" % Test
