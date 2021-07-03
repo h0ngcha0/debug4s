@@ -8,12 +8,14 @@ Small Scala utility to make print line debugging easier
 
 ## Setup
 
-Add the following to your `build.sbt` file:
+Use [sbt-github-packages](https://github.com/djspiewak/sbt-github-packages) plugin.
+
+And then add the following to your `build.sbt` file:
 
 ```scala
-resolvers += Resolver.bintrayRepo("liuhongchao", "maven")
+resolvers += Resolver.githubPackages("liuhongchao")
 
-libraryDependencies += "it.softfork" %% "debug4s" % "0.0.4"
+libraryDependencies += "it.softfork" %% "debug4s" % "0.1.0"
 ```
 
 ## Features
