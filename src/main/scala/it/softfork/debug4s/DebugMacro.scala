@@ -62,8 +62,8 @@ object DebugMacroImpl {
     val sourceContent = new String(tree.pos.source.content)
     val start = tree.collect {
       case treeVal => treeVal.pos match {
-        case c.universe.NoPosition ⇒ Int.MaxValue
-        case p ⇒ {
+        case c.universe.NoPosition => Int.MaxValue
+        case p => {
           if (p.isRange) p.start else p.point
         }
       }
@@ -75,7 +75,7 @@ object DebugMacroImpl {
     sourceContent.slice(start, start + end)
   }
 
-  private def stringExpr[String](c: blackbox.Context)(str: fansi.Str, colorMaybe: Option[fansi.Attr] = None): c.Expr[String] = {
+  private def stringExpr(c: blackbox.Context)(str: fansi.Str, colorMaybe: Option[fansi.Attr]): c.Expr[String] = {
     val withColorMaybe = colorMaybe.map(_.apply(str).toString()).getOrElse(str)
     c.Expr[String](
       c.universe.Literal(c.universe.Constant(withColorMaybe))
