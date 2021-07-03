@@ -14,4 +14,9 @@ libraryDependencies ++= Seq(
 
 addCompilerPlugin("org.scalamacros" % "paradise" % "2.1.1" cross CrossVersion.full)
 
+githubOwner := "liuhongchao"
+githubRepository := "debug4s"
+publishMavenStyle := true
+ThisBuild / publishTo := githubPublishTo.value
+
 licenses += ("MIT", url("http://opensource.org/licenses/MIT"))
